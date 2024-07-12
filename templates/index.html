@@ -3,10 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Question Panel</title>
-    <link rel="stylesheet" href="{{url_for('static',filename='styles.css')}}"/>
+    <title>Questions Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Questions</h1>
+    <header>
+        <div class="header-content">
+            <h1>Questions Panel</h1>
+            <div class="buttons">
+                <button class="honor-board">Honor Board</button>
+                <form action="{{ url_for('admin_login_page') }}" method="get" class="inline-form">
+                    <button type="submit" class="admin-login">Admin Login</button>
+                </form>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section class="qa">
+            <div class="qa-item">
+                <h2>What is the capital of France?</h2>
+                <p>The capital of France is Paris.</p>
+            </div>
+            <div class="qa-item">
+                <h2>How many planets are in the solar system?</h2>
+                <p>There are 8 planets in the solar system.</p>
+            </div>
+            <div class="qa-item">
+                <h2>What is the largest ocean on Earth?</h2>
+                <p>The largest ocean on Earth is the Pacific Ocean.</p>
+            </div>
+        </section>
+    </main>
 </body>
 </html>

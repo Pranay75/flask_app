@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Admin Dashboard</h1>
+        </div>
+    </header>
+    <main>
+        <section class="admin-options">
+            <div class="admin-option">
+                <img src="{{ url_for('static', filename='edit.png') }}" alt="Edit Questions" width="200">
+                <a href="{{ url_for('edit_questions') }}" class="button">Edit Questions</a>
+            </div>
+            <div class="admin-option">
+                <img src="{{ url_for('static', filename='list.png') }}" alt="Evaluate Students" width="200">
+                <a href="{{ url_for('evaluate_students') }}" class="button">Evaluate Students</a>
+            </div>
+            <!-- Add more options as needed -->
+        </section>
+    </main>
+</body>
+</html>

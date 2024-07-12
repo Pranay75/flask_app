@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Questions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Edit Questions</h1>
+        </div>
+    </header>
+    <main>
+        <section class="admin-options">
+            <form action="/add_question" method="POST" class="admin-option">
+                <input type="text" name="question" placeholder="Enter new question" required>
+                <button type="submit" class="button">Add Question</button>
+            </form>
+            {% for question in questions %}
+            <div class="admin-option">
+                <form action="/update_question/{{ question.id }}" method="POST">
+                    <input type="text" name="question" value="{{ question.question }}" required>
+                    <button type="submit" class="button">Update</button>
+                </form>
+                <form action="/delete_question/{{ question.id }}" method="POST">
+                    <button type="submit" class="button delete-btn">Delete</button>
+                </form>
+            </div>
+            {% endfor %}
+        </section>
+    </main>
+</body>
+</html>
