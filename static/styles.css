@@ -1,7 +1,9 @@
+/* Global styles */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
+  background-color: #f8f9fa; /* Light gray background */
 }
 
 header {
@@ -55,11 +57,17 @@ main {
 
 .container {
   margin-top: 100px;
+  padding: 20px;
+  background-color: #ffffff; /* White container background */
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Shadow effect */
 }
 
 h2 {
   margin-bottom: 30px;
 }
+
+/* Admin Options */
 .admin-options {
   display: flex;
   justify-content: center;
@@ -96,4 +104,23 @@ h2 {
 .admin-option .button:hover {
   background-color: #007bff;
   color: white;
+}
+
+/* Questions Page */
+.list-group-item {
+  border: none;
+  background-color: #ffffff; /* White list item background */
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Light shadow effect */
+  margin-bottom: 10px;
+  padding: 15px;
+}
+
+.discussion-info {
+  font-weight: bold;
+  margin-top: 20px;
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
 }
