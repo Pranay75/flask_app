@@ -16,7 +16,7 @@ class Question(db.Model):
     question = db.Column(db.String(200), nullable=False)
 
 class Student(db.Model):
-    student_id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.String(20), primary_key=True)  # Adjusted to string type
     name = db.Column(db.String(100), nullable=False)
     program = db.Column(db.String(100), nullable=False)
     branch = db.Column(db.String(100), nullable=False)
@@ -24,7 +24,7 @@ class Student(db.Model):
 class Mark(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     marks = db.Column(db.Integer, nullable=False)
-    student_id = db.Column(db.Integer, db.ForeignKey('student.student_id'), nullable=False)
+    student_id = db.Column(db.String(20), db.ForeignKey('student.student_id'), nullable=False)
     student = db.relationship('Student', backref=db.backref('marks', lazy=True))
 
 @app.route('/')
@@ -105,17 +105,43 @@ def evaluate_students():
     if 'admin' in session:
         if request.method == 'POST':
             student_id = request.form['student_id']
-            marks = request.form['marks']
-            new_mark = Mark(student_id=student_id, marks=marks)
-            db.session.add(new_mark)
-            db.session.commit()
-            flash('Marks added successfully!', 'success')
+            name = request.form['name']
+            program = request.form['program']
+            branch = request.form['branch']
+            marks = int(request.form['marks'])
+            
+            student = Student.query.filter_by(student_id=student_id).first()
+            if student:
+                student_mark = Mark.query.filter_by(student_id=student_id).first()
+                student_mark.marks = student_mark.marks + marks
+                db.session.commit()
+                flash('Marks updated successfully!', 'success')
+            else:
+                
+                new_mark = Mark(student_id=student_id, marks=marks)
+                db.session.add(new_mark)
+            
+                new_student = Student(student_id=student_id, name=name, program=program, branch=branch)
+                db.session.add(new_student)
+                db.session.commit()
+                flash('Student evaluated and added successfully!', 'success')
+        
             return redirect(url_for('evaluate_students'))
+        
         students = Student.query.all()
         return render_template('evaluate_students.html', students=students)
     else:
         flash('Please log in first.', 'danger')
         return redirect(url_for('admin_login_page'))
+
+
+@app.route('/honor-board')
+def honor_board():
+    students = db.session.query(
+        Student.name, Student.program, Student.branch, Mark.marks
+    ).join(Mark, Student.student_id == Mark.student_id).order_by(Mark.marks.desc()).all()
+    return render_template('honor_board.html', students=students)
+
 
 if __name__ == '__main__':
     with app.app_context():
