@@ -137,10 +137,33 @@ def evaluate_students():
 
 @app.route('/honor-board')
 def honor_board():
+    # Query all students and their total marks
     students = db.session.query(
-        Student.name, Student.program, Student.branch, Mark.marks
-    ).join(Mark, Student.student_id == Mark.student_id).order_by(Mark.marks.desc()).all()
-    return render_template('honor_board.html', students=students)
+        Student.student_id, Student.name, Student.program, Student.branch, db.func.sum(Mark.marks).label('total_marks')
+    ).join(Mark, Student.student_id == Mark.student_id).group_by(Student.student_id).order_by(db.func.sum(Mark.marks).desc()).all()
+    
+    # Calculate rank for all students
+    ranked_students = []
+    for index, student in enumerate(students, start=1):
+        ranked_students.append({
+            'rank': index,
+            'student_id': student.student_id,
+            'name': student.name,
+            'program': student.program,
+            'branch': student.branch,
+            'total_marks': student.total_marks
+        })
+    
+    # Filter students by student_id if provided
+    student_id = request.args.get('student_id')
+    if student_id:
+        ranked_students = [student for student in ranked_students if student['student_id'] == student_id]
+    
+    return render_template('honor_board.html', students=ranked_students)
+
+
+
+
 
 
 if __name__ == '__main__':
