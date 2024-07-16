@@ -5,25 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- Bootstrap CSS for easy styling -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <div class="header-content">
-            <h1>Admin Dashboard</h1>
-        </div>
+    <header class="d-flex justify-content-between align-items-center p-3 bg-primary text-white">
+        <h1>Admin Dashboard</h1>
+        <a href="{{ url_for('logout') }}" class="btn btn-light">Logout</a>
     </header>
-    <main>
-        <section class="admin-options">
-            <div class="admin-option">
-                <img src="{{ url_for('static', filename='edit.png') }}" alt="Edit Questions" width="200">
-                <a href="{{ url_for('edit_questions') }}" class="button">Edit Questions</a>
+    <main class="container mt-4">
+        <section class="admin-options row">
+            <div class="admin-option col-md-6 text-center mb-4">
+                <img src="{{ url_for('static', filename='edit.png') }}" alt="Edit Questions" width="200" class="img-fluid">
+                <a href="{{ url_for('edit_questions') }}" class="btn btn-primary mt-2">Edit Questions</a>
             </div>
-            <div class="admin-option">
-                <img src="{{ url_for('static', filename='list.png') }}" alt="Evaluate Students" width="200">
-                <a href="{{ url_for('evaluate_students') }}" class="button">Evaluate Students</a>
+            <div class="admin-option col-md-6 text-center mb-4">
+                <img src="{{ url_for('static', filename='list.png') }}" alt="Evaluate Students" width="200" class="img-fluid">
+                <a href="{{ url_for('evaluate_students') }}" class="btn btn-primary mt-2">Evaluate Students</a>
             </div>
-            <!--  more options as needed -->
+            <!-- Add more options as needed -->
         </section>
     </main>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -1,9 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
 import os
 
+load_dotenv()
+
 app = Flask(__name__)
-app.secret_key = os.urandom(24)  # Replace with a fixed key in production
+app.secret_key = os.urandom(24)  #Replace with a fixed key.
 
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
@@ -16,7 +19,7 @@ class Question(db.Model):
     question = db.Column(db.String(200), nullable=False)
 
 class Student(db.Model):
-    student_id = db.Column(db.String(20), primary_key=True)  # Adjusted to string type
+    student_id = db.Column(db.String(20), primary_key=True)  
     name = db.Column(db.String(100), nullable=False)
     program = db.Column(db.String(100), nullable=False)
     branch = db.Column(db.String(100), nullable=False)
@@ -37,7 +40,7 @@ def admin_login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if username == 'admin' and password == 'password':  # Example check
+        if username == os.getenv("ADMIN_USERNAME", "admin") and password == os.getenv("ADMIN_PASSWORD","password"):  #password can be changed
             flash('Login successful!', 'success')
             session['admin'] = True
             return redirect(url_for('admin_dashboard'))
@@ -48,7 +51,14 @@ def admin_login():
 
 @app.route('/login')
 def admin_login_page():
+    if 'admin' in session:
+        return redirect(url_for('admin_dashboard'))
     return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('admin', None)
+    return redirect(url_for('index'))
 
 @app.route('/admin-dashboard')
 def admin_dashboard():
@@ -160,11 +170,6 @@ def honor_board():
         ranked_students = [student for student in ranked_students if student['student_id'] == student_id]
     
     return render_template('honor_board.html', students=ranked_students)
-
-
-
-
-
 
 if __name__ == '__main__':
     with app.app_context():
