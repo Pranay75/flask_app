@@ -16,7 +16,8 @@ db = SQLAlchemy(app)
 # Define models
 class Question(db.Model):
     question_id = db.Column(db.Integer, primary_key=True)
-    question = db.Column(db.String(200), nullable=False)
+    question = db.Column(db.String(500), nullable=False)
+    is_active = db.Column(db.Boolean, default=True)
 
 class Student(db.Model):
     student_id = db.Column(db.String(20), primary_key=True)  
@@ -73,7 +74,7 @@ def edit_questions():
     if 'admin' in session:
         if request.method == 'POST':
             question_text = request.form['question']
-            new_question = Question(question=question_text)
+            new_question = Question(question=question_text, is_active=True)
             db.session.add(new_question)
             db.session.commit()
             flash('Question added successfully!', 'success')
@@ -109,6 +110,12 @@ def update_question():
     else:
         flash('Please log in first.', 'danger')
         return redirect(url_for('admin_login_page'))
+@app.route('/deactivate_question/<int:question_id>', methods=['POST'])
+def deactivate_question(question_id):
+    question = Question.query.get_or_404(question_id)
+    question.is_active = not(question.is_active)
+    db.session.commit()
+    return redirect(url_for('edit_questions'))
 
 @app.route('/evaluate-students', methods=['GET', 'POST'])
 def evaluate_students():

@@ -46,6 +46,10 @@
                         <td>{{ question.question }}</td>
                         <td>
                             <button class="btn btn-warning edit-btn" data-toggle="modal" data-target="#editModal" data-id="{{ question.question_id }}" data-question="{{ question.question }}">Edit</button>
+                            <form method="POST" action="{{ url_for('deactivate_question', question_id=question.question_id) }}" style="display:inline;">
+                                <input type="hidden" name="_method" value="POST">
+                                <button type="submit" class="btn btn-secondary">{{ 'Deactivate' if question.is_active else 'Activate' }}</button>
+                            </form>
                             <form method="POST" action="{{ url_for('delete_question', question_id=question.question_id) }}" style="display:inline;">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <button type="submit" class="btn btn-danger">Delete</button>

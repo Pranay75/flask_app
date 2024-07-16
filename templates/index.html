@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Questions Panel</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -30,7 +29,7 @@
         <div class="container mt-4">
             <h2 class="text-center mb-4">Questions</h2>
             <ol class="list-group">
-                {% for question in questions %}
+                {% for question in questions if question.is_active %}
                 <li class="list-group-item">{{ loop.index }}. {{ question.question }}</li>
                 {% endfor %}
             </ol>
