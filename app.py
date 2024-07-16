@@ -113,7 +113,7 @@ def update_question():
 @app.route('/deactivate_question/<int:question_id>', methods=['POST'])
 def deactivate_question(question_id):
     question = Question.query.get_or_404(question_id)
-    question.is_active = not(question.is_active)
+    question.is_active = (question.is_active)
     db.session.commit()
     return redirect(url_for('edit_questions'))
 
@@ -154,28 +154,38 @@ def evaluate_students():
 
 @app.route('/honor-board')
 def honor_board():
-    # Query all students and their total marks
-    students = db.session.query(
+    student_id = request.args.get('student_id')
+    name = request.args.get('name')
+    program = request.args.get('program')
+    branch = request.args.get('branch')
+
+    query = db.session.query(
         Student.student_id, Student.name, Student.program, Student.branch, db.func.sum(Mark.marks).label('total_marks')
-    ).join(Mark, Student.student_id == Mark.student_id).group_by(Student.student_id).order_by(db.func.sum(Mark.marks).desc()).all()
-    
-    # Calculate rank for all students
+    ).join(Mark).group_by(Student.student_id).order_by(db.func.sum(Mark.marks).desc())
+
+    if student_id:
+        query = query.filter(Student.student_id.like(f"%{student_id}%"))
+    if name:
+        query = query.filter(Student.name.like(f"%{name}%"))
+    if program:
+        query = query.filter(Student.program.like(f"%{program}%"))
+    if branch:
+        query = query.filter(Student.branch.like(f"%{branch}%"))
+
+    students = query.all()
+
     ranked_students = []
-    for index, student in enumerate(students, start=1):
-        ranked_students.append({
-            'rank': index,
+    for index, student in enumerate(students):
+        student_dict = {
             'student_id': student.student_id,
             'name': student.name,
             'program': student.program,
             'branch': student.branch,
-            'total_marks': student.total_marks
-        })
-    
-    # Filter students by student_id if provided
-    student_id = request.args.get('student_id')
-    if student_id:
-        ranked_students = [student for student in ranked_students if student['student_id'] == student_id]
-    
+            'total_marks': student.total_marks,
+            'rank': index + 1
+        }
+        ranked_students.append(student_dict)
+
     return render_template('honor_board.html', students=ranked_students)
 
 if __name__ == '__main__':
