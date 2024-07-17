@@ -11,7 +11,7 @@
     <header>
         <div class="header-content">
             <h1>Evaluate Students</h1>
-            <a href="{{ url_for('logout') }}" class="btn btn-light">Logout</a>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-light">Back to Dashboard</a>
         </div>
     </header>
     <main>
@@ -37,9 +37,33 @@
                     <label for="marks">Marks</label>
                     <input type="number" id="marks" name="marks" class="form-control" required>
                 </div>
+                <div class="form-group">
+                    <label for="question">Question</label>
+                    <select id="question" name="question" class="form-control" required>
+                        <option value="" disabled selected>Select a question</option>
+                        {% for question in questions %}
+                        <option value="{{ question.question }}">{{ question.question }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="remarks">Remarks</label>
+                    <textarea id="remarks" name="remarks" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" name="date" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="link1">Link 1</label>
+                    <input type="url" id="link1" name="link1" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="link2">Link 2</label>
+                    <input type="url" id="link2" name="link2" class="form-control">
+                </div>
                 <button type="submit" class="btn btn-primary">Evaluate</button>
             </form>
-            
         </div>
     </main>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

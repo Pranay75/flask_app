@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+from datetime import datetime
 import os
 
 load_dotenv()
@@ -30,6 +31,17 @@ class Mark(db.Model):
     marks = db.Column(db.Integer, nullable=False)
     student_id = db.Column(db.String(20), db.ForeignKey('student.student_id'), nullable=False)
     student = db.relationship('Student', backref=db.backref('marks', lazy=True))
+
+class Solved(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    question = db.Column(db.String(500), nullable=False)
+    student_name = db.Column(db.String(100), nullable=False)
+    student_id = db.Column(db.String(50), nullable=False)
+    remarks = db.Column(db.String(500), nullable=True)
+    marks = db.Column(db.Integer, nullable=False)
+    link1 = db.Column(db.String(200), nullable=True)
+    link2 = db.Column(db.String(200), nullable=True)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
 
 @app.route('/')
 def index():
@@ -110,67 +122,102 @@ def update_question():
     else:
         flash('Please log in first.', 'danger')
         return redirect(url_for('admin_login_page'))
+    
 @app.route('/deactivate_question/<int:question_id>', methods=['POST'])
 def deactivate_question(question_id):
     question = Question.query.get_or_404(question_id)
-    question.is_active = (question.is_active)
+    question.is_active = not (question.is_active)
     db.session.commit()
     return redirect(url_for('edit_questions'))
 
-@app.route('/evaluate-students', methods=['GET', 'POST'])
+@app.route('/evaluate_students', methods=['GET', 'POST'])
 def evaluate_students():
-    if 'admin' in session:
-        if request.method == 'POST':
-            student_id = request.form['student_id']
-            name = request.form['name']
-            program = request.form['program']
-            branch = request.form['branch']
-            marks = int(request.form['marks'])
-            
-            student = Student.query.filter_by(student_id=student_id).first()
-            if student:
-                student_mark = Mark.query.filter_by(student_id=student_id).first()
-                student_mark.marks = student_mark.marks + marks
-                db.session.commit()
-                flash('Marks updated successfully!', 'success')
+    if request.method == 'POST':
+        student_id = request.form['student_id']
+        name = request.form['name']
+        program = request.form['program']
+        branch = request.form['branch']
+        marks = int(request.form['marks'])
+        question = request.form['question']  # Ensure question_id is fetched as an integer
+        remarks = request.form['remarks']
+        date = request.form['date']
+        link1 = request.form['link1']
+        link2 = request.form['link2']
+        
+        # Convert date string to datetime object
+        date = datetime.strptime(date, '%Y-%m-%d')
+        
+       
+        
+        
+        # Check if student already exists
+        student = Student.query.filter_by(student_id=student_id).first()
+        if student:
+            # Update marks in Mark table
+            mark = Mark.query.filter_by(student_id=student_id).first()
+            if mark:
+                mark.marks += marks
             else:
-                
                 new_mark = Mark(student_id=student_id, marks=marks)
                 db.session.add(new_mark)
             
-                new_student = Student(student_id=student_id, name=name, program=program, branch=branch)
-                db.session.add(new_student)
-                db.session.commit()
-                flash('Student evaluated and added successfully!', 'success')
+            # Update Solved table
+            solved = Solved(
+                student_id=student_id, 
+                student_name=name, 
+                question=question,
+                remarks=remarks,
+                marks=mark.marks,
+                link1=link1,
+                link2=link2,
+                date=date
+            )
+            db.session.add(solved)
+        else:
+            # Add new student to Student table
+            new_student = Student(student_id=student_id, name=name, program=program, branch=branch)
+            db.session.add(new_student)
+            
+            # Add marks to Mark table
+            new_mark = Mark(student_id=student_id, marks=marks)
+            db.session.add(new_mark)
+            
+            # Add to Solved table
+            solved = Solved(
+                student_id=student_id, 
+                student_name=name, 
+                question=question,
+                remarks=remarks,
+                marks=marks,
+                link1=link1,
+                link2=link2,
+                date=date
+            )
+            db.session.add(solved)
         
-            return redirect(url_for('evaluate_students'))
-        
-        students = Student.query.all()
-        return render_template('evaluate_students.html', students=students)
-    else:
-        flash('Please log in first.', 'danger')
-        return redirect(url_for('admin_login_page'))
+        db.session.commit()
+        flash('Evaluation recorded successfully!', 'success')
+        return redirect(url_for('evaluate_students'))
 
+    questions = Question.query.filter_by(is_active=True).all()
+    return render_template('evaluate_students.html', questions=questions)
+
+@app.route('/view_solved', methods=['GET'])
+def view_solved():
+    solved_questions = Solved.query.all()
+    return render_template('view_solved.html', solved_questions=solved_questions)
+
+@app.route('/view_all_questions')
+def view_all_questions():
+    questions = Question.query.all()
+    return render_template('view_all_questions.html', questions=questions)
 
 @app.route('/honor-board')
 def honor_board():
-    student_id = request.args.get('student_id')
-    name = request.args.get('name')
-    program = request.args.get('program')
-    branch = request.args.get('branch')
 
     query = db.session.query(
         Student.student_id, Student.name, Student.program, Student.branch, db.func.sum(Mark.marks).label('total_marks')
     ).join(Mark).group_by(Student.student_id).order_by(db.func.sum(Mark.marks).desc())
-
-    if student_id:
-        query = query.filter(Student.student_id.like(f"%{student_id}%"))
-    if name:
-        query = query.filter(Student.name.like(f"%{name}%"))
-    if program:
-        query = query.filter(Student.program.like(f"%{program}%"))
-    if branch:
-        query = query.filter(Student.branch.like(f"%{branch}%"))
 
     students = query.all()
 
