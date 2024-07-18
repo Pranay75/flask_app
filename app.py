@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session , jsonify
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from datetime import datetime
@@ -167,7 +167,7 @@ def evaluate_students():
                 student_name=name, 
                 question=question,
                 remarks=remarks,
-                marks=mark.marks,
+                marks=marks,
                 link1=link1,
                 link2=link2,
                 date=date
@@ -235,6 +235,20 @@ def honor_board():
 
     return render_template('honor_board.html', students=ranked_students)
 
+@app.route('/get_student_details', methods=['GET'])
+def get_student_details():
+    student_id = request.args.get('student_id')
+    student = Student.query.filter_by(student_id=student_id).first()
+    if student:
+        student_data = {
+            'name': student.name,
+            'program': student.program,
+            'branch': student.branch,
+        }
+        return jsonify(student_data)
+    else:
+        return jsonify({})
+    
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

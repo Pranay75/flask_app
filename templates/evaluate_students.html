@@ -19,7 +19,12 @@
             <form action="{{ url_for('evaluate_students') }}" method="POST">
                 <div class="form-group">
                     <label for="student_id">Student ID</label>
-                    <input type="text" id="student_id" name="student_id" class="form-control" required>
+                    <div class="input-group">
+                        <input type="text" id="student_id" name="student_id" class="form-control" required>
+                        <div class="input-group-append">
+                            <button type="button" id="fetch-details" class="btn btn-primary">Fetch Details</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="name">Name</label>
@@ -66,8 +71,34 @@
             </form>
         </div>
     </main>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#fetch-details').on('click', function() {
+                var studentId = $('#student_id').val();
+                $.ajax({
+                    url: '{{ url_for("get_student_details") }}',
+                    type: 'GET',
+                    data: {
+                        student_id: studentId
+                    },
+                    success: function(response) {
+                        if (response.name) {
+                            $('#name').val(response.name);
+                            $('#program').val(response.program);
+                            $('#branch').val(response.branch);
+                        } else {
+                            alert('No student found with the given ID.');
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while fetching the student details.');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
