@@ -30,7 +30,15 @@
     </header>
     <main>
         <div class="container">
-            <h2 class="text-center mb-4">Honor Board</h2>
+            <h2 class="text-center mb-4">Honor Board - {{ year }}</h2>
+            <div class="mb-4">
+                <h4>Select Year:</h4>
+                <div class="btn-group" role="group">
+                    {% for y in available_years %}
+                    <a href="{{ url_for('honor_board', year=y) }}" class="btn btn-secondary {% if y == year %}active{% endif %}">{{ y }}</a>
+                    {% endfor %}
+                </div>
+            </div>
             <table id="honorBoardTable" class="table table-striped table-bordered">
                 <thead class="table-header">
                     <tr>
