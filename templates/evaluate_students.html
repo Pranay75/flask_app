@@ -58,7 +58,7 @@
                 </div>
                 <div class="form-group">
                     <label for="question">Question</label>
-                    <select id="question" name="question" class="form-control" required>
+                    <select id="question" name="question" class="form-control form-control-lg" required>
                         <option value="" disabled selected>Select a question</option>
                         {% for question in questions %}
                         <option value="{{ question.question }}">{{ question.question }}</option>

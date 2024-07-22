@@ -37,7 +37,7 @@
             <form id="add-question-form" method="POST" action="{{ url_for('edit_questions') }}">
                 <div class="form-group">
                     <label for="question">Question:</label>
-                    <input type="text" id="question" name="question" class="form-control" required>
+                    <textarea type="text" id="question" name="question" class="form-control" required></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Add Question</button>
             </form>

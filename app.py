@@ -46,7 +46,7 @@ class Solved(db.Model):
 
 @app.route('/')
 def index():
-    questions = Question.query.all()
+    questions = Question.query.filter_by(is_active=True).order_by(Question.question_id.desc()).all()
     return render_template('index.html', questions=questions)
 
 @app.route('/admin-login', methods=['GET', 'POST'])
