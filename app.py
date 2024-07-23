@@ -1,14 +1,19 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session , jsonify
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
-from datetime import datetime, timezone
+from datetime import datetime, timezone , timedelta
 import os
 
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)  #Replace with a fixed key.
-
+app.secret_key = os.getenv("SECRET_KEY", "safeisnotsafe")
+app.config.update(
+    PERMANENT_SESSION_LIFETIME=timedelta(hours=1),
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SECURE=False,  # Set to True if using HTTPS
+    SESSION_COOKIE_SAMESITE='Lax'
+)
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -81,6 +86,10 @@ def admin_dashboard():
     else:
         flash('Please log in first.', 'danger')
         return redirect(url_for('admin_login_page'))
+
+@app.route('/about')
+def about_page():
+    return render_template('about.html')
 
 @app.route('/edit-questions', methods=['GET', 'POST'])
 def edit_questions():
@@ -267,4 +276,4 @@ def get_student_details():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(debug=True,host='0.0.0.0')
