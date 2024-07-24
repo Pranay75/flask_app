@@ -4,6 +4,7 @@
 - [Installation](./installation.md)
 - [Configuration](./configuration.md)
 - [Structure](./structure.md)
+- [Running](./running.md)
 - [Routes](./routes_view.md)
     - [Public routes](./public_routes.md)
     - [Admin routes](./admin_routes.md)

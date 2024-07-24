@@ -4,7 +4,7 @@ To get started with the Flask Web Application, follow these steps:
 
 1. **Clone the Repository:**
     ```bash
-    git clone https://github.com/Pranay75/flask_app.git
+    git clone https://github.com/rise-research-labs/honor-board-website
     cd flask_app
     ```
 

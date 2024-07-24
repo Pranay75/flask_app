@@ -8,7 +8,7 @@ This is a Flask-based web application designed to manage and evaluate student qu
 
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/Pranay75/flask_app.git 
+    git clone https://github.com/rise-research-labs/honor-board-website 
     cd flask_app
     ```
 
