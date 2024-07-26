@@ -13,9 +13,10 @@ pip install -r requirements.txt
 
 # Systemd Service
 echo "Creating systemd service..."
+user=$USER
 sudo tee /etc/systemd/system/question-panel-app.service << EOF
 [Service]
-User=$USER
+User=$user
 WorkingDirectory=$PWD
 Environment="PATH=$PWD/venv/bin"
 ExecStart=$PWD/venv/bin/gunicorn -w 3 --bind 127.0.0.1:5963 wsgi:app
