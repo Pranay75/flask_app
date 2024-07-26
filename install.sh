@@ -46,4 +46,32 @@ EOF
 sudo ln -s /etc/nginx/sites-available/question-panel-app /etc/nginx/sites-enabled 
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t && sudo nginx -s reload && \
-sudo systemctl restart nginx 
+sudo systemctl restart nginx
+
+# Create .env
+echo
+echo "Creating .env file..."
+core_env_file=".env"
+if [[ ! -f $core_env_file ]]; then
+    cp .env.example $core_env_file
+fi
+
+generate_key() {
+    local chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-'
+    tr -dc "$chars" < /dev/urandom | head -c "24"
+}
+
+SECRET_KEY=$(generate_key)
+sed -i "s/^SECRET_KEY=.*/SECRET_KEY=$SECRET_KEY/" $core_env_file
+
+ADMIN_USERNAME=$(grep "^ADMIN_USERNAME=" $core_env_file | cut -d'=' -f2)
+read -p "Enter the username for the admin user [default: $ADMIN_USERNAME]: " ADMIN_USERNAME
+if [[ -n "$ADMIN_USERNAME" ]]; then
+    sed -i "s/^ADMIN_USERNAME=.*/ADMIN_USERNAME=$ADMIN_USERNAME/" $core_env_file
+fi
+
+ADMIN_PASSWORD=$(grep "^ADMIN_PASSWORD=" $core_env_file | cut -d'=' -f2)
+read -p "Enter the password for the admin user [default: $ADMIN_PASSWORD]: " ADMIN_PASSWORD
+if [[ -n "$ADMIN_PASSWORD" ]]; then
+    sed -i "s/^ADMIN_PASSWORD=.*/ADMIN_PASSWORD=$ADMIN_PASSWORD/" $core_env_file
+fi
