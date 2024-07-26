@@ -43,7 +43,7 @@ location / {
 EOF
 
 
-sudo ln -s /etc/nginx/sites-available/question-panel-app /etc/nginx/sites-enabled 
+sudo ln -sf /etc/nginx/sites-available/question-panel-app /etc/nginx/sites-enabled 
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t && sudo nginx -s reload && \
 sudo systemctl restart nginx
