@@ -18,7 +18,7 @@ sudo tee /etc/systemd/system/question-panel-app.service << EOF
 User=$USER
 WorkingDirectory=$PWD
 Environment="PATH=$PWD/venv/bin"
-ExecStart=$PWD/venv/bin/gunicorn -w 3 --bind unix:app.sock -m 007 wsgi:app
+ExecStart=$PWD/venv/bin/gunicorn -w 3 --bind 127.0.0.1 --port 5963 wsgi:app
 Restart=always
 [Install]
 WantedBy=multi-user.target
@@ -35,7 +35,7 @@ server_name question-panel;
 
 location / {
   include proxy_params;
-  proxy_pass http://unix:$PWD/app.sock;
+  proxy_pass http://127.0.0.1:5963/;
   proxy_set_header Host \$http_host;
   proxy_set_header X-Real-IP \$remote_addr;
   proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
