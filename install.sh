@@ -1,10 +1,13 @@
 #!/bin/bash
 set -e
 
+sudo apt-get update
+sudo apt install vim
 sudo apt install nginx
 sudo apt install python3
-sudo apt install python3.10-venv
-python3 -m venv venv
+sudo apt install python3-pip
+pip install virtualenv
+virtualenv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
@@ -13,7 +16,6 @@ echo "Creating systemd service..."
 sudo tee /etc/systemd/system/question-panel-app.service << EOF
 [Service]
 User=$USER
-Group=www-data
 WorkingDirectory=$PWD
 Environment="PATH=$PWD/venv/bin"
 ExecStart=$PWD/venv/bin/gunicorn -w 3 --bind unix:app.sock -m 007 wsgi:app
@@ -23,7 +25,7 @@ WantedBy=multi-user.target
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl enable app
+sudo systemctl enable question-panel-app
 # Nginx config
 echo "Creating nginx server..."
 sudo tee /etc/nginx/sites-available/question-panel-app << EOF
@@ -44,8 +46,7 @@ location / {
 EOF
 
 
-sudo ln -s /etc/nginx/sites-available/question-panel-app /etc/nginx/sites-enabled
-sudo chmod 775 -R ./
-sudo chmod 775 -R ../
+sudo ln -s /etc/nginx/sites-available/question-panel-app /etc/nginx/sites-enabled 
+sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t && sudo nginx -s reload && \
-sudo systemctl restart nginx
+sudo systemctl restart nginx 
