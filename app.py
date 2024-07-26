@@ -18,9 +18,7 @@ app.config.update(
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-with app.app_context():
-    db.create_all()
-    
+
 # Define models
 class Question(db.Model):
     question_id = db.Column(db.Integer, primary_key=True)
@@ -50,6 +48,9 @@ class Solved(db.Model):
     link1 = db.Column(db.String(200), nullable=True)
     link2 = db.Column(db.String(200), nullable=True)
     date = db.Column(db.DateTime, default=datetime.utcnow)
+
+with app.app_context():
+    db.create_all()
 
 @app.route('/')
 def index():
