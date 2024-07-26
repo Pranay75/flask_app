@@ -18,7 +18,7 @@ sudo tee /etc/systemd/system/question-panel-app.service << EOF
 User=$USER
 WorkingDirectory=$PWD
 Environment="PATH=$PWD/venv/bin"
-ExecStart=$PWD/venv/bin/gunicorn -w 3 --bind 127.0.0.1 --port 5963 wsgi:app
+ExecStart=$PWD/venv/bin/gunicorn -w 3 --bind 127.0.0.1:5963 wsgi:app
 Restart=always
 [Install]
 WantedBy=multi-user.target
