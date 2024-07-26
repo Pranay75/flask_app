@@ -2,8 +2,7 @@
 set -e
 
 sudo apt-get update
-sudo apt install vim nginx python3 python3-pip -y
-pip install virtualenv 
+sudo apt install vim nginx python3 python3-pip virtualenv -y
 virtualenv venv
 source venv/bin/activate
 pip install -r requirements.txt
