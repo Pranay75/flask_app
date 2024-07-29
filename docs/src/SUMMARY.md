@@ -15,3 +15,4 @@
   - [Question Management](./features_question_management.md)
   - [Student Evaluation](./features_student_evaluation.md)
   - [Honor Board](./features_honor_board.md)
+- [Server setup](./server-setup.md)
